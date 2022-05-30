@@ -1,7 +1,8 @@
 # Looper
 
-This mod adds portals that spawn after bosses allowing for infinite loops! The portals are configurable so you can spawn a specific portal instead of the default bazaar. You can also configure it to spawn a specific portal at a stage pre/post loop.
+This mod adds portals that spawn after bosses allowing for infinite loops! The portals are configurable so you can spawn a specific portal instead of the default bazaar. You can also configure it to spawn a specific portal at multiple stages pre/post loop.
 Default Config:
+
 	- Bazaar Portal after Mithrix
 	- Bazaar Portal after Voidling
 	- Bazaar Portal after Twisted Scavenger
@@ -9,12 +10,20 @@ Default Config:
 ## Future Plans
 * Ablity to configure in-game instead of the r2modman config editor.
 * Add more portals at teleporter events
-* Force portals at several stages in config
 
 ## Contact
 Reach out with bugs/feedback **leon_#0235**
 
 ## Changelog
+**1.1.0**
+* Adds config to force portal at multiple stages
+
+**1.0.2**
+* Fixed portal spawning on the wrong donut after voidling
+
+**1.0.1**
+* I done goofed the upload
+
 **1.0.0**
 * Release!
 * Adds config for portal type after boss fights

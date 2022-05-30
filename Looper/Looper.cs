@@ -2,12 +2,13 @@ using BepInEx;
 using R2API.Utils;
 using RoR2;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
 namespace Looper
 {
-    [BepInPlugin("com.zorp.Looper", "Looper", "1.0.0")]
+    [BepInPlugin("com.zorp.Looper", "Looper", "1.1.0")]
     [NetworkCompatibility]
 
     public class Looper : BaseUnityPlugin
@@ -36,12 +37,13 @@ namespace Looper
             // 4th Abyssal Depths, Sirens Call, Sundered Grove
             {4, new string[3] { "dampcavesimple", "shipgraveyard", "rootjungle" }  },
             // 5th Sky Meadow
-            {4, new string[1] { "skymeadow" }  }
+            {5, new string[1] { "skymeadow" }  },
         };
-
+        int[] portalStageSpawns;
         public void Awake()
         {
             ModConfig.InitConfig(Config);
+            portalStageSpawns = SanitizeStagePortalConfig();
             EntityStates.Missions.LunarScavengerEncounter.FadeOut.duration *= 3.0f;
             On.RoR2.TeleporterInteraction.AttemptToSpawnAllEligiblePortals += new On.RoR2.TeleporterInteraction.hook_AttemptToSpawnAllEligiblePortals(TeleporterInteraction_AttemptToSpawnAllEligiblePortals);
             On.RoR2.VoidRaidGauntletController.SpawnOutroPortal += new On.RoR2.VoidRaidGauntletController.hook_SpawnOutroPortal(VoidRaidGauntletController_SpawnOutroPortal);
@@ -66,13 +68,13 @@ namespace Looper
             int sanitizedPortalValue = SanitizePortalValue(ModConfig.voidlingPortal.Value);
 
             SpawnCard portalCard = ScriptableObject.CreateInstance<SpawnCard>();
-            portalCard.prefab = Resources.Load<GameObject>("Prefabs/NetworkedObjects/" + portals[sanitizedPortalValue]);
+            portalCard.prefab = LegacyResourcesAPI.Load<GameObject>("Prefabs/NetworkedObjects/" + portals[sanitizedPortalValue]);
             DirectorCore.instance.TrySpawnObject(new DirectorSpawnRequest(portalCard, new DirectorPlacementRule()
             {
                 placementMode = DirectorPlacementRule.PlacementMode.Approximate,
                 minDistance = self.minOutroPortalDistance,
                 maxDistance = self.maxOutroPortalDistance,
-                spawnOnTarget = self.initialDonut.returnPoint
+                spawnOnTarget = self.currentDonut.returnPoint
             }, RoR2Application.rng));
         }
 
@@ -87,31 +89,37 @@ namespace Looper
             orig.Invoke(self);
         }
 
-        private void TeleporterInteraction_AttemptToSpawnAllEligiblePortals(On.RoR2.TeleporterInteraction.orig_AttemptToSpawnAllEligiblePortals orig, TeleporterInteraction self)
+        private async void TeleporterInteraction_AttemptToSpawnAllEligiblePortals(On.RoR2.TeleporterInteraction.orig_AttemptToSpawnAllEligiblePortals orig, TeleporterInteraction self)
         {
             
-            if (SanitizeStage())
+            if (portalStageSpawns.Length > 0)
             {
-                string[] stageArray = stages[ModConfig.stage.Value];
-                foreach (string stage in stageArray)
+                int[] stageNums = new int[5] { 1, 2, 3, 4, 5 };
+                await Task.Run(() =>
                 {
-                    if (SceneCatalog.mostRecentSceneDef == SceneCatalog.GetSceneDefFromSceneName(stage))
+                    foreach (int stageNum in stageNums)
                     {
-                        switch (ModConfig.stagePortal.Value)
+                        foreach (string stage in stages[stageNum])
                         {
-                            case 0:
-                                self.shouldAttemptToSpawnShopPortal = true;
-                                break;
-                            case 1:
-                                self.shouldAttemptToSpawnGoldshoresPortal = true;
-                                break;
-                            case 2:
-                                self.shouldAttemptToSpawnMSPortal = true;
-                                break;
+                            if (SceneCatalog.mostRecentSceneDef == SceneCatalog.GetSceneDefFromSceneName(stage) && portalStageSpawns[stageNum - 1] != 0)
+                            {
+                                switch (ModConfig.stagePortalType.Value)
+                                {
+                                    case 0:
+                                        self.shouldAttemptToSpawnShopPortal = true;
+                                        break;
+                                    case 1:
+                                        self.shouldAttemptToSpawnGoldshoresPortal = true;
+                                        break;
+                                    case 2:
+                                        self.shouldAttemptToSpawnMSPortal = true;
+                                        break;
+                                }
+                                return;
+                            }
                         }
-                    };
-                }
-                    
+                    }
+                });                    
             }
             orig(self);
         }
@@ -122,13 +130,21 @@ namespace Looper
             NetworkServer.Spawn(portal);
         }
 
-        private bool SanitizeStage()
+        private int[] SanitizeStagePortalConfig()
         {
-            bool spawnStagePortal = true;
+            int[] numbers = new int[5] { 0, 0, 0, 0, 0 };
+            int value = ModConfig.stagePortalNum.Value;
 
-            if (ModConfig.stage.Value == 0 || ModConfig.stage.Value < 0 || ModConfig.stage.Value > 5)
-                spawnStagePortal = false;
-            return spawnStagePortal;
+            if (value > 12345 || value <= 0)
+                return new int[0];
+
+            for (; value > 0; value /= 10)
+            {
+                int digit = value % 10;
+                numbers[digit - 1] = digit;
+            }
+
+            return numbers;
         }
 
         private int SanitizePortalValue(int configValue)

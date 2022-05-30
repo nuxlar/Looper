@@ -1,6 +1,6 @@
 ﻿{
 	"name": "Looper",
-	"version_number": "1.0.0",
+	"version_number": "1.1.0",
 	"website_url": "",
 	"description": "Adds configurable portals after bosses/stages so you can keep looping or orchestrate runs!",
 	"dependencies": [
