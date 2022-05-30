@@ -1,0 +1,10 @@
+﻿{
+	"name": "Looper",
+	"version_number": "1.0.0",
+	"website_url": "",
+	"description": "Adds configurable portals after bosses/stages so you can keep looping or orchestrate runs!",
+	"dependencies": [
+		"bbepis-BepInExPack-5.4.9",
+		"RiskofThunder-HookGenPatcher-1.2.1"
+	]
+}
