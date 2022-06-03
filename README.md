@@ -15,6 +15,9 @@ Default Config:
 Reach out with bugs/feedback **leon_#0235**
 
 ## Changelog
+**1.1.1**
+* Fixes voidling portal not spawning in multiplayer
+
 **1.1.0**
 * Adds config to force portal at multiple stages
 

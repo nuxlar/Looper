@@ -8,7 +8,7 @@ using UnityEngine.Networking;
 
 namespace Looper
 {
-    [BepInPlugin("com.zorp.Looper", "Looper", "1.1.0")]
+    [BepInPlugin("com.zorp.Looper", "Looper", "1.1.1")]
     [NetworkCompatibility]
 
     public class Looper : BaseUnityPlugin
@@ -65,17 +65,12 @@ namespace Looper
         private void VoidRaidGauntletController_SpawnOutroPortal(On.RoR2.VoidRaidGauntletController.orig_SpawnOutroPortal orig, VoidRaidGauntletController self)
         {
             orig.Invoke(self);
-            int sanitizedPortalValue = SanitizePortalValue(ModConfig.voidlingPortal.Value);
-
-            SpawnCard portalCard = ScriptableObject.CreateInstance<SpawnCard>();
-            portalCard.prefab = LegacyResourcesAPI.Load<GameObject>("Prefabs/NetworkedObjects/" + portals[sanitizedPortalValue]);
-            DirectorCore.instance.TrySpawnObject(new DirectorSpawnRequest(portalCard, new DirectorPlacementRule()
-            {
-                placementMode = DirectorPlacementRule.PlacementMode.Approximate,
-                minDistance = self.minOutroPortalDistance,
-                maxDistance = self.maxOutroPortalDistance,
-                spawnOnTarget = self.currentDonut.returnPoint
-            }, RoR2Application.rng));
+            GameObject portal = Instantiate(LegacyResourcesAPI.Load<GameObject>("Prefabs/NetworkedObjects/" + portals[SanitizePortalValue(ModConfig.voidlingPortal.Value)]), self.currentDonut.returnPoint.position, Quaternion.identity);
+            portal.GetComponent<DirectorPlacementRule>().placementMode = DirectorPlacementRule.PlacementMode.Approximate;
+            portal.GetComponent<DirectorPlacementRule>().minDistance = self.minOutroPortalDistance;
+            portal.GetComponent<DirectorPlacementRule>().maxDistance = self.maxOutroPortalDistance;
+            portal.GetComponent<DirectorPlacementRule>().spawnOnTarget = self.currentDonut.returnPoint;
+            NetworkServer.Spawn(portal);
         }
 
         private void TwistedEncounterFadeOut_OnEnter(On.EntityStates.Missions.LunarScavengerEncounter.FadeOut.orig_OnEnter orig, EntityStates.Missions.LunarScavengerEncounter.FadeOut self)
