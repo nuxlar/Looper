@@ -39,6 +39,9 @@
       <HintPath>libs\Mono.Security.dll</HintPath>
       <Private>false</Private>
     </Reference>
+	<Reference Include="RiskOfOptions">
+		<HintPath>libs\RiskOfOptions.dll</HintPath>
+	</Reference>
     <Reference Include="pb_Stl">
       <HintPath>libs\pb_Stl.dll</HintPath>
       <Private>false</Private>

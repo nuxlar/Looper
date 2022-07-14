@@ -1,20 +1,35 @@
 # Looper
 
-This mod adds portals that spawn after bosses allowing for infinite loops! The portals are configurable so you can spawn a specific portal instead of the default bazaar. You can also configure it to spawn a specific portal at multiple stages pre/post loop.
+You can configure which portal spawns after each main boss (Mithrix, Voidling, Twisted Scav) to keep the run going and specify a portal to spawn on each stage pre/post loop to orchestrate your runs. There's RiskOfOptions support so you can configure it in the game menu by going to "Settings" and "Mod Options".
 Default Config:
 
 	- Bazaar Portal after Mithrix
 	- Bazaar Portal after Voidling
 	- Bazaar Portal after Twisted Scavenger
+	- No default stage portals
 
-## Future Plans
-* Ablity to configure in-game instead of the r2modman config editor.
-* Add more portals at teleporter events
+## Contact Me
 
-## Contact
-Reach out with bugs/feedback **leon_#0235**
+Join my Discord!
+
+[<img src="https://www.seekpng.com/png/detail/19-192311_discord-color-logo-discord-banner-for-twitch.png">](https://discord.gg/VNB3wqy242)
+
+## Support Me
+
+If you like what I'm doing contribute to my caffeine addiction!
+
+[<img src="https://uploads-ssl.webflow.com/5c14e387dab576fe667689cf/61e11d430afb112ea33c3aa5_Button-1.png">](https://ko-fi.com/nuxlar)
 
 ## Changelog
+**2.0.0**
+* Adds Deep Void portal (Voidling) to post-boss portals
+* Adds portal config for each stage pre-loop
+* Adds portal config for each stage during loops
+* Adds Locus and Deep Void portals to stage portals
+* Adds Risk of Options support (edit config in-game)
+* Fixes portal not spawning on stage 1 sometimes
+* Refactoring
+
 **1.1.1**
 * Fixes voidling portal not spawning in multiplayer
 
